@@ -1,8 +1,12 @@
+# =============================================================================
+# Глобальные параметры (backend)
+# =============================================================================
+
 variable "yandex_token" {
   description = "Токен для доступа к Yandex Cloud"
   type        = string
   sensitive   = true
-}  
+}
 
 variable "cloud_id" {
   description = "ID облака Yandex Cloud"
@@ -31,4 +35,3 @@ variable "bucket_name" {
   description = "Уникальное имя бакета для хранения состояния Terraform"
   type        = string
 }
-
