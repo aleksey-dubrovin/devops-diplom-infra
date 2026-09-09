@@ -1,25 +1,42 @@
-name: Развертывание инфраструктуры
+# Имя workflow, отображаемое в интерфейсе GitHub Actions
+name: Deploy Infrastructure
 
+# Триггеры запуска workflow
 on:
+  # Запуск при пуше в ветку main (после мержа PR)
   push:
     branches: [ main ]
     paths:
+      - 'infrastructure/**'  # Только при изменении файлов в папке infrastructure/
+  # Запуск при создании или обновлении Pull Request (для проверки плана)
+  pull_request:
+    branches: [ main ]
+    paths:
       - 'infrastructure/**'
-  workflow_dispatch:   # ручной запуск
+  # Возможность ручного запуска из интерфейса GitHub
+  workflow_dispatch:
 
+# Определение задач (jobs)
 jobs:
-  terraform:
+  # Задача для проверки плана в Pull Request (без применения изменений)
+  terraform-plan:
+    name: Terraform Plan (PR)
     runs-on: ubuntu-latest
+    # Запускается только для событий pull_request
+    if: github.event_name == 'pull_request'
     steps:
-      - name: Загрузка кода
+      # Клонирование репозитория
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Настройка Terraform
+      # Установка Terraform указанной версии
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.0
 
-      - name: Инициализация Terraform
+      # Инициализация Terraform с передачей параметров бэкенда через -backend-config
+      - name: Terraform Init
         run: |
           terraform init \
             -backend-config="bucket=$TF_VAR_bucket_name" \
@@ -30,28 +47,60 @@ jobs:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
           TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
-          TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID}}
-          TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
           TF_VAR_service_account_key: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
+          TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
+          TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
 
-      - name: Проверка изменений (Plan)
+      # План изменений (без применения)
+      - name: Terraform Plan
         run: terraform plan
         working-directory: ./infrastructure
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
           TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
-          TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID}}
-          TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
           TF_VAR_service_account_key: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
+          TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
+          TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
 
-      - name: Применение изменений (Apply)
+  # Задача для применения изменений в ветке main
+  terraform-apply:
+    name: Terraform Apply (main)
+    runs-on: ubuntu-latest
+    # Запускается только при пуше в main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=$TF_VAR_bucket_name" \
+            -backend-config="access_key=$TF_VAR_access_key" \
+            -backend-config="secret_key=$TF_VAR_secret_key" \
+            -backend-config="key=infra.tfstate"
+        working-directory: ./infrastructure
+        env:
+          TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
+          TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
+          TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
+          TF_VAR_service_account_key: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
+          TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
+          TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
+
+      - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./infrastructure
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
           TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
-          TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID}}
-          TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
           TF_VAR_service_account_key: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
+          TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
+          TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
