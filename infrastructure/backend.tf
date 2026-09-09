@@ -11,7 +11,7 @@ terraform {
   # Конфигурация бэкенда для хранения состояния (state-файла) в S3-совместимом хранилище Yandex Object Storage
   backend "s3" {
     # Явное указание эндпоинта для S3-совместимого API Yandex Cloud
-    endpoints = {
+    endpoint = {
       s3 = "https://storage.yandexcloud.net"
     }
 
