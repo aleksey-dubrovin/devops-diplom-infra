@@ -14,7 +14,7 @@ terraform {
     endpoints = {
       s3 = "https://storage.yandexcloud.net"
     }
-
+    bucket = "devops-diplom-tf-b1glfq89j9n7quk0cnf0"
     # Регион расположения бакета
     region = "ru-central1"
 
