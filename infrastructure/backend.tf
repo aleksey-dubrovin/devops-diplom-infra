@@ -34,6 +34,9 @@ terraform {
     # Отключает проверку контрольной суммы для объектов S3 (необходимо для Terraform 1.6.3 и старше)
     skip_s3_checksum = true
 
+    # Заставляет Terraform использовать URL вида https://storage.yandexcloud.net/<bucket>/<key>
+    force_path_style = true
+
   }
 }
 
