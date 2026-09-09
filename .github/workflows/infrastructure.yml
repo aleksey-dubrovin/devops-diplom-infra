@@ -45,7 +45,6 @@ jobs:
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
-          TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
           TF_VAR_service_account_key: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
           TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
@@ -57,7 +56,6 @@ jobs:
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
-          TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
           TF_VAR_service_account_key: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
           TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
@@ -86,7 +84,6 @@ jobs:
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
-          TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
           TF_VAR_service_account_key: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
           TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
@@ -97,7 +94,6 @@ jobs:
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
-          TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
           TF_VAR_service_account_key: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
           TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}

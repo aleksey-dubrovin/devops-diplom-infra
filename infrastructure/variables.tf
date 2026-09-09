@@ -12,12 +12,6 @@ variable "secret_key" {
   sensitive   = true
 }
 
-# Имя S3-бакета для хранения состояния Terraform
-variable "bucket_name" {
-  description = "Имя S3-бакета для хранения состояния Terraform"
-  type        = string
-}
-
 # JSON-ключ сервисного аккаунта для аутентификации провайдера Yandex Cloud
 variable "service_account_key" {
   description = "JSON-ключ сервисного аккаунта для аутентификации провайдера Yandex Cloud"
