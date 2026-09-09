@@ -20,7 +20,11 @@ jobs:
           terraform_version: 1.5.0
 
       - name: Инициализация Terraform
-        run: terraform init
+        run: |
+          terraform init \
+            -backend-config="bucket=$TF_VAR_bucket_name" \
+            -backend-config="access_key=$TF_VAR_access_key" \
+            -backend-config="secret_key=$TF_VAR_secret_key" \
         working-directory: ./infrastructure
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
