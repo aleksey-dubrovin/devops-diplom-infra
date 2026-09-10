@@ -1,14 +1,15 @@
-# Имя workflow, отображаемое в интерфейсе GitHub Actions
+# =============================================================================
+# Workflow для развёртывания инфраструктуры через Terraform
+# =============================================================================
 name: Deploy Infrastructure
 
-# Триггеры запуска workflow
 on:
-  # Запуск при пуше в ветку main (после мержа PR)
+  # Автоматический запуск при пуше в main (после мержа PR)
   push:
     branches: [ main ]
     paths:
-      - 'infrastructure/**'  # Только при изменении файлов в папке infrastructure/
-  # Запуск при создании или обновлении Pull Request (для проверки плана)
+      - 'infrastructure/**'
+  # Запуск проверки плана при создании/обновлении PR
   pull_request:
     branches: [ main ]
     paths:
@@ -16,19 +17,19 @@ on:
   # Возможность ручного запуска из интерфейса GitHub
   workflow_dispatch:
 
-# Определение задач (jobs)
 jobs:
-  # Задача для проверки плана в Pull Request (без применения изменений)
+  # ===========================================================================
+  # Job 1: Проверка плана (только для PR, без применения)
+  # ===========================================================================
   terraform-plan:
     name: Terraform Plan (PR)
     runs-on: ubuntu-latest
-    # Запускается только для событий pull_request
     if: github.event_name == 'pull_request'
     steps:
-      # Клонирование репозитория
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Кэширование провайдеров Terraform для ускорения init
       - name: Cache Terraform plugins
         uses: actions/cache@v4
         with:
@@ -37,42 +38,46 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-terraform-
 
-      # Установка Terraform указанной версии
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.12.2
 
-      # Инициализация Terraform с передачей параметров бэкенда через -backend-config
+      # Декодирование base64-секрета в файл JSON-ключа
+      - name: Write Service Account Key to File
+        run: echo '${{ secrets.YC_SERVICE_ACCOUNT_KEY }}' | base64 -d > ${{ github.workspace }}/sa-key.json
+
       - name: Terraform Init
         run: |
           terraform init \
             -backend-config="access_key=$TF_VAR_access_key" \
-            -backend-config="secret_key=$TF_VAR_secret_key" \
+            -backend-config="secret_key=$TF_VAR_secret_key"
         working-directory: ./infrastructure
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
-          TF_VAR_service_account_key_file: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
-          TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
+          TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
+          TF_VAR_service_account_key_file: ${{ github.workspace }}/sa-key.json
+          TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
 
-      # План изменений (без применения)
       - name: Terraform Plan
         run: terraform plan
         working-directory: ./infrastructure
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
-          TF_VAR_service_account_key_file: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
-          TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
+          TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
+          TF_VAR_service_account_key_file: ${{ github.workspace }}/sa-key.json
+          TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
 
-  # Задача для применения изменений в ветке main
+  # ===========================================================================
+  # Job 2: Применение изменений (только для push в main)
+  # ===========================================================================
   terraform-apply:
     name: Terraform Apply (main)
     runs-on: ubuntu-latest
-    # Запускается только при пуше в main
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
@@ -85,23 +90,27 @@ jobs:
           key: ${{ runner.os }}-terraform-${{ hashFiles('infrastructure/**/*.tf') }}
           restore-keys: |
             ${{ runner.os }}-terraform-
-      
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.12.2
 
+      - name: Write Service Account Key to File
+        run: echo '${{ secrets.YC_SERVICE_ACCOUNT_KEY }}' | base64 -d > ${{ github.workspace }}/sa-key.json
+
       - name: Terraform Init
         run: |
           terraform init \
             -backend-config="access_key=$TF_VAR_access_key" \
-            -backend-config="secret_key=$TF_VAR_secret_key" \
+            -backend-config="secret_key=$TF_VAR_secret_key"
         working-directory: ./infrastructure
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
-          TF_VAR_service_account_key_file: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
-          TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
+          TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
+          TF_VAR_service_account_key_file: ${{ github.workspace }}/sa-key.json
+          TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
 
       - name: Terraform Apply
@@ -110,6 +119,7 @@ jobs:
         env:
           TF_VAR_access_key: ${{ secrets.YC_ACCESS_KEY }}
           TF_VAR_secret_key: ${{ secrets.YC_SECRET_KEY }}
-          TF_VAR_service_account_key_file: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
-          TF_VAR_cloud_id: ${{secrets.YC_CLOUD_ID}}
+          TF_VAR_bucket_name: ${{ secrets.TF_BUCKET_NAME }}
+          TF_VAR_service_account_key_file: ${{ github.workspace }}/sa-key.json
+          TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
