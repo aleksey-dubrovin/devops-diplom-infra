@@ -35,14 +35,7 @@ terraform {
     skip_s3_checksum = true
 
     # Заставляет Terraform использовать URL вида https://storage.yandexcloud.net/<bucket>/<key>
-    force_path_style = true
+    use_path_style = true
 
   }
-}
-
-provider "yandex" {
-  service_account_key = var.service_account_key
-  folder_id = var.folder_id
-  cloud-id  = var.cloud_id
-  zone      = var.default_zone
 }
