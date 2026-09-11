@@ -31,3 +31,8 @@ output "s3_private_endpoint_id" {
   description = "ID приватного эндпоинта Object Storage"
   value       = module.vpc.s3_private_endpoint_id
 }
+
+output "security_group_ids" {
+  description = "Карта ID security групп"
+  value       = module.security_group.security_group_ids
+}
