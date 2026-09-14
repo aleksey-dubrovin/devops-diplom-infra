@@ -118,3 +118,8 @@ variable "k8s_create_sa" {
   type        = bool
   default     = false
 }
+
+variable "ssh_public_key_path" {
+  description = "Путь к публичному SSH-ключу"
+  type        = string
+}

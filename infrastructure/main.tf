@@ -250,3 +250,20 @@ module "iam_k8s" {
     "dns.editor",
   ]
 }
+# =============================================================================
+# Модуль Compute — bastion и внешние worker-узлы
+# =============================================================================
+module "compute" {
+  source = "../modules/compute"
+
+  folder_id        = var.folder_id
+  public_subnet_id = module.vpc.public_subnet_ids["ru-central1-d"]
+  private_subnet_ids = {
+    "ru-central1-a" = module.vpc.private_subnet_ids["ru-central1-a"]
+    "ru-central1-b" = module.vpc.private_subnet_ids["ru-central1-b"]
+  }
+
+  security_group_ids = module.security_group.security_group_ids
+
+  ssh_public_key = file(var.ssh_public_key_path)
+}
