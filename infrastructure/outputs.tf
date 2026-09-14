@@ -36,3 +36,18 @@ output "security_group_ids" {
   description = "Карта ID security групп"
   value       = module.security_group.security_group_ids
 }
+
+output "k8s_cluster_id" {
+  description = "ID кластера Kubernetes"
+  value       = module.k8s_cluster.cluster_id
+}
+
+output "k8s_cluster_endpoint" {
+  description = "Внутренний endpoint кластера"
+  value       = module.k8s_cluster.cluster_endpoint
+}
+
+output "k8s_service_account_id" {
+  description = "ID сервисного аккаунта для K8s"
+  value       = module.iam_k8s.service_account_id
+}
