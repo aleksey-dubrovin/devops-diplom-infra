@@ -50,6 +50,7 @@ resource "yandex_compute_instance" "worker" {
   name        = "${var.worker_config.name_prefix}-${each.key}"
   platform_id = var.worker_config.platform_id
   folder_id   = var.folder_id
+  zone        = each.key
 
   resources {
     cores         = var.worker_config.cores
