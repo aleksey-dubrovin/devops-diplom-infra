@@ -10,5 +10,8 @@ output "bastion_internal_ip" {
 
 output "worker_internal_ips" {
   description = "Карта внутренних IP worker-узлов (ключ — зона)"
-  value       = { for k, v in yandex_compute_instance.worker : k => v.network_interface[0].ip_address }
+  value = {
+    "ru-central1-a" = yandex_compute_instance.worker_a.network_interface[0].ip_address
+    "ru-central1-b" = yandex_compute_instance.worker_b.network_interface[0].ip_address
+  }
 }
