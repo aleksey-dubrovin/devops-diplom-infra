@@ -83,7 +83,7 @@ module "security_group" {
           description       = "Health checks от балансировщика"
           from_port         = 0
           to_port           = 65535
-          predefined_target = "load_balancer_health_checks"
+          predefined_target = "loadbalancer_healthchecks"
         },
         {
           protocol       = "TCP"
