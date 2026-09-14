@@ -174,3 +174,79 @@ module "security_group" {
     }
   }
 }
+# =============================================================================
+# Модуль Managed Kubernetes (региональный мастер, туннельный режим Cilium)
+# =============================================================================
+module "k8s_cluster" {
+  source = "../modules/k8s-cluster"
+
+  folder_id  = var.folder_id
+  network_id = module.vpc.vpc_id
+  service_account_id      = module.iam_k8s.service_account_id
+  node_service_account_id = module.iam_k8s.service_account_id
+
+  # Используем управляющие подсети (mgmt) в трёх зонах
+  master_locations = [
+    {
+      zone      = "ru-central1-a"
+      subnet_id = module.vpc.mgmt_subnet_ids["ru-central1-a"]
+    },
+    {
+      zone      = "ru-central1-b"
+      subnet_id = module.vpc.mgmt_subnet_ids["ru-central1-b"]
+    },
+    {
+      zone      = "ru-central1-d"
+      subnet_id = module.vpc.mgmt_subnet_ids["ru-central1-d"]
+    }
+  ]
+
+  # Security group для K8s
+  security_group_ids = [module.security_group.security_group_ids["sg-k8s-main"]]
+
+  # Существующий сервисный аккаунт (тот же, что использовался для backend)
+  #service_account_id      = var.k8s_service_account_id
+  #node_service_account_id = var.k8s_node_service_account_id
+
+  # Версия и канал обновлений
+  cluster_version = var.k8s_cluster_version
+  release_channel = var.k8s_release_channel
+
+  # Туннельный режим (Cilium) для внешних узлов
+  enable_cilium_policy = true
+
+  # Публичный доступ к мастеру (для упрощения; в продакшене можно выключить)
+  public_access = true
+
+  # Размер etcd-кластера
+  etcd_cluster_size = 3
+
+  # Окна обслуживания (опционально)
+  master_maintenance_windows = [
+    {
+      day        = "monday"
+      start_time = "23:00"
+      duration   = "3h"
+    }
+  ]
+}
+# =============================================================================
+# Назначение дополнительных ролей сервисному аккаунту для K8s
+# =============================================================================
+module "iam_k8s" {
+  source = "../modules/iam"
+
+  folder_id = var.folder_id
+  sa_name   = var.k8s_sa_name
+  create_sa = var.k8s_create_sa 
+
+  roles = [
+    "k8s.clusters.agent",
+    "k8s.tunnelClusters.agent",
+    "vpc.publicAdmin",
+    "container-registry.images.puller",
+    "monitoring.editor",
+    "storage.editor",
+    "dns.editor",
+  ]
+}

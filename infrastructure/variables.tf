@@ -85,3 +85,36 @@ variable "nat_gateway_name" {
   type        = string
   default     = "diplom-nat-gw"
 }
+
+variable "k8s_service_account_id" {
+  description = "ID сервисного аккаунта для мастера Managed Kubernetes"
+  type        = string
+}
+
+variable "k8s_node_service_account_id" {
+  description = "ID сервисного аккаунта для узлов Managed Kubernetes"
+  type        = string
+}
+
+variable "k8s_cluster_version" {
+  description = "Версия Kubernetes"
+  type        = string
+  default     = "1.35"
+}
+
+variable "k8s_release_channel" {
+  description = "Канал обновлений Kubernetes"
+  type        = string
+  default     = "STABLE"
+}
+
+variable "k8s_sa_name" {
+  description = "Имя существующего сервисного аккаунта"
+  type        = string
+}
+
+variable "k8s_create_sa" {
+  description = "Создавать новый SA или использовать существующий"
+  type        = bool
+  default     = false
+}

@@ -60,6 +60,9 @@ jobs:
           TF_VAR_service_account_key_file: ${{ github.workspace }}/sa-key.json
           TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
+          TF_VAR_k8s_service_account_id: ${{ secrets.K8S_SERVICE_ACCOUNT_ID }}
+          TF_VAR_k8s_node_service_account_id: ${{ secrets.K8S_NODE_SERVICE_ACCOUNT_ID }}
+          TF_VAR_k8s_sa_name: ${{ secrets.K8S_SA_NAME }}
 
       - name: Terraform Plan
         run: terraform plan
@@ -71,6 +74,9 @@ jobs:
           TF_VAR_service_account_key_file: ${{ github.workspace }}/sa-key.json
           TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
+          TF_VAR_k8s_service_account_id: ${{ secrets.K8S_SERVICE_ACCOUNT_ID }}
+          TF_VAR_k8s_node_service_account_id: ${{ secrets.K8S_NODE_SERVICE_ACCOUNT_ID }}
+          TF_VAR_k8s_sa_name: ${{ secrets.K8S_SA_NAME }}
 
   # ===========================================================================
   # Job 2: Применение изменений (только для push в main)
@@ -112,6 +118,9 @@ jobs:
           TF_VAR_service_account_key_file: ${{ github.workspace }}/sa-key.json
           TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
+          TF_VAR_k8s_service_account_id: ${{ secrets.K8S_SERVICE_ACCOUNT_ID }}
+          TF_VAR_k8s_node_service_account_id: ${{ secrets.K8S_NODE_SERVICE_ACCOUNT_ID }}
+          TF_VAR_k8s_sa_name: ${{ secrets.K8S_SA_NAME }}
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
@@ -123,3 +132,6 @@ jobs:
           TF_VAR_service_account_key_file: ${{ github.workspace }}/sa-key.json
           TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
+          TF_VAR_k8s_service_account_id: ${{ secrets.K8S_SERVICE_ACCOUNT_ID }}
+          TF_VAR_k8s_node_service_account_id: ${{ secrets.K8S_NODE_SERVICE_ACCOUNT_ID }}
+          TF_VAR_k8s_sa_name: ${{ secrets.K8S_SA_NAME }}
