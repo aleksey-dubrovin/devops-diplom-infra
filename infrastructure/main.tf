@@ -79,6 +79,13 @@ module "security_group" {
       description = "Основные правила для Managed K8s: API, etcd, Cilium, kubelet"
       ingress = [
         {
+          protocol          = "TCP"
+          description       = "Health checks от балансировщика"
+          from_port         = 0
+          to_port           = 65535
+          predefined_target = "load_balancer_health_checks"
+        },
+        {
           protocol       = "TCP"
           description    = "Kubernetes API (443)"
           port           = 443
@@ -116,8 +123,22 @@ module "security_group" {
         },
         {
           protocol       = "ICMP"
-          description    = "ICMP для диагностики"
-          v4_cidr_blocks = ["10.0.0.0/16"]
+          description    = "ICMP из подсетей Yandex Cloud"
+          v4_cidr_blocks = ["10.0.0.0/8", "192.168.0.0/16", "172.16.0.0/12"]
+        },
+        {
+          protocol       = "ANY"
+          description    = "Трафик к CIDR кластера (поды)"
+          from_port      = 0
+          to_port        = 65535
+          v4_cidr_blocks = ["10.96.0.0/16"]
+        },
+        {
+          protocol       = "ANY"
+          description    = "Трафик к CIDR сервисов"
+          from_port      = 0
+          to_port        = 65535
+          v4_cidr_blocks = ["10.112.0.0/16"]
         }
       ]
       egress = [
