@@ -98,9 +98,11 @@ module "security_group" {
           v4_cidr_blocks = ["10.0.0.0/16"]
         },
         {
-          protocol          = "TCP"
+          protocol          = "ANY"
           description       = "Взаимодействие мастер-узел и узел-узел"
           predefined_target = "self_security_group"
+          from_port         = 0
+          to_port           = 65535
         },
         {
           protocol          = "UDP"
@@ -131,14 +133,7 @@ module "security_group" {
           description    = "Трафик к CIDR кластера (поды)"
           from_port      = 0
           to_port        = 65535
-          v4_cidr_blocks = ["10.96.0.0/16"]
-        },
-        {
-          protocol       = "ANY"
-          description    = "Трафик к CIDR сервисов"
-          from_port      = 0
-          to_port        = 65535
-          v4_cidr_blocks = ["10.112.0.0/16"]
+          v4_cidr_blocks = ["10.96.0.0/16", "10.112.0.0/16", "10.100.0.0/16", "10.101.0.0/16"]
         }
       ]
       egress = [
