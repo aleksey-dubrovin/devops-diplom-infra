@@ -120,7 +120,6 @@ variable "k8s_create_sa" {
 }
 
 variable "ssh_public_key_path" {
-  description = "Путь к публичному SSH-ключу для доступа к ВМ"
+  description = "Путь к публичному SSH-ключу"
   type        = string
-  default     = "~/.ssh/key.pub"
 }
