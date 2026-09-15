@@ -123,3 +123,9 @@ variable "ssh_public_key_path" {
   description = "Путь к публичному SSH-ключу"
   type        = string
 }
+
+variable "external_nodegroup_name" {
+  description = "Имя группы внешних узлов в манифесте NodeGroup"
+  type        = string
+  default     = "external-workers"
+}
