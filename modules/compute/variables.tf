@@ -28,10 +28,20 @@ variable "ssh_public_key" {
   sensitive   = true
 }
 
-variable "image_family" {
-  description = "Семейство образов для ВМ"
+variable "image_id" {
+  description = "ID конкретного образа Ubuntu (зафиксированный)"
   type        = string
-  default     = "ubuntu-2404-lts"
+  default     = "fd8nj6iro13qffg31not"
+}
+
+# =============================================================================
+# Зона для bastion-хоста
+# =============================================================================
+
+variable "bastion_zone" {
+  description = "Зона доступности для bastion-хоста"
+  type        = string
+  default     = "ru-central1-d"
 }
 
 # =============================================================================
@@ -41,14 +51,14 @@ variable "image_family" {
 variable "bastion_config" {
   description = "Конфигурация bastion-хоста"
   type = object({
-    name               = string
-    platform_id        = string
-    cores              = number
-    memory             = number
-    core_fraction      = number
-    disk_size          = number
-    preemptible        = bool
-    ssh_user           = string
+    name          = string
+    platform_id   = string
+    cores         = number
+    memory        = number
+    core_fraction = number
+    disk_size     = number
+    preemptible   = bool
+    ssh_user      = string
   })
   default = {
     name          = "diplom-bastion"
@@ -69,14 +79,15 @@ variable "bastion_config" {
 variable "worker_config" {
   description = "Конфигурация worker-узлов"
   type = object({
-    name_prefix        = string
-    platform_id        = string
-    cores              = number
-    memory             = number
-    core_fraction      = number
-    disk_size          = number
-    preemptible        = bool
-    ssh_user           = string
+    name_prefix   = string
+    platform_id   = string
+    cores         = number
+    memory        = number
+    core_fraction = number
+    disk_size     = number
+    preemptible   = bool
+    ssh_user      = string
+    zones         = map(string)
   })
   default = {
     name_prefix   = "diplom-worker"
@@ -87,5 +98,9 @@ variable "worker_config" {
     disk_size     = 20
     preemptible   = true
     ssh_user      = "ubuntu"
+    zones = {
+      "a" = "ru-central1-a"
+      "b" = "ru-central1-b"
+    }
   }
 }
