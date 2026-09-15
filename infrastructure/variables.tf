@@ -119,6 +119,12 @@ variable "k8s_create_sa" {
   default     = false
 }
 
+variable "admin_ip_cidrs" {
+  description = "Список CIDR, которым разрешён доступ к K8s API (админские IP)"
+  type        = list(string)
+  default     = []
+}
+
 variable "ssh_public_key_path" {
   description = "Путь к публичному SSH-ключу"
   type        = string

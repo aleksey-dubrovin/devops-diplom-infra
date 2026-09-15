@@ -98,6 +98,18 @@ module "security_group" {
           v4_cidr_blocks = ["10.0.0.0/16"]
         },
         {
+          protocol       = "TCP"
+          description    = "Kubernetes API (443) с админских IP"
+          port           = 443
+          v4_cidr_blocks = var.admin_ip_cidrs
+        },
+        {
+          protocol       = "TCP"
+          description    = "Kubernetes API (6443) с админских IP"
+          port           = 6443
+          v4_cidr_blocks = var.admin_ip_cidrs
+        },
+        {
           protocol          = "ANY"
           description       = "Взаимодействие мастер-узел и узел-узел"
           predefined_target = "self_security_group"

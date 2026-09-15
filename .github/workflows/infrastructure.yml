@@ -65,6 +65,7 @@ jobs:
           TF_VAR_k8s_node_service_account_id: ${{ secrets.K8S_NODE_SERVICE_ACCOUNT_ID }}
           TF_VAR_k8s_sa_name: ${{ secrets.K8S_SA_NAME }}
           TF_VAR_ssh_public_key_path: ${{ github.workspace }}/ssh-key.pub
+          TF_VAR_admin_ip_cidrs: ${{ secrets.ADMIN_IP_CIDRS }}
 
       - name: Terraform Plan
         run: terraform plan
@@ -80,6 +81,7 @@ jobs:
           TF_VAR_k8s_node_service_account_id: ${{ secrets.K8S_NODE_SERVICE_ACCOUNT_ID }}
           TF_VAR_k8s_sa_name: ${{ secrets.K8S_SA_NAME }}
           TF_VAR_ssh_public_key_path: ${{ github.workspace }}/ssh-key.pub
+          TF_VAR_admin_ip_cidrs: ${{ secrets.ADMIN_IP_CIDRS }}
 
   # ===========================================================================
   # Job 2: Применение изменений (только для push в main)
@@ -126,6 +128,7 @@ jobs:
           TF_VAR_k8s_node_service_account_id: ${{ secrets.K8S_NODE_SERVICE_ACCOUNT_ID }}
           TF_VAR_k8s_sa_name: ${{ secrets.K8S_SA_NAME }}
           TF_VAR_ssh_public_key_path: ${{ github.workspace }}/ssh-key.pub
+          TF_VAR_admin_ip_cidrs: ${{ secrets.ADMIN_IP_CIDRS }}
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
@@ -141,3 +144,4 @@ jobs:
           TF_VAR_k8s_node_service_account_id: ${{ secrets.K8S_NODE_SERVICE_ACCOUNT_ID }}
           TF_VAR_k8s_sa_name: ${{ secrets.K8S_SA_NAME }}
           TF_VAR_ssh_public_key_path: ${{ github.workspace }}/ssh-key.pub
+          TF_VAR_admin_ip_cidrs: ${{ secrets.ADMIN_IP_CIDRS }}
