@@ -80,8 +80,8 @@ output "k8s_cluster_ca_certificate" {
 # =============================================================================
 
 output "bastion_public_ip" {
-  description = "Публичный IP bastion-хоста (для SSH-подключения)"
-  value       = module.compute.bastion_ip
+  description = "Публичный IP bastion-хоста"
+  value       = module.compute.bastion_public_ip
 }
 
 output "bastion_internal_ip" {
@@ -91,7 +91,7 @@ output "bastion_internal_ip" {
 
 output "bastion_ssh_command" {
   description = "Готовая команда для SSH-подключения к bastion"
-  value       = "ssh -i ~/.ssh/aleksey ubuntu@${module.compute.bastion_ip}"
+  value       = module.compute.bastion_ssh_command
 }
 
 output "worker_internal_ips" {
@@ -108,7 +108,7 @@ output "worker_ssh_commands_via_bastion" {
   description = "Готовые команды для SSH-подключения к worker-узлам через bastion"
   value = {
     for zone, ip in module.compute.worker_internal_ips :
-    zone => "ssh -i ~/.ssh/key -J ubuntu@${module.compute.bastion_ip} ubuntu@${ip}"
+    zone => "ssh -i ~/.ssh/key -J ubuntu@${module.compute.bastion_public_ip} ubuntu@${ip}"
   }
 }
 
