@@ -112,6 +112,12 @@ module "security_group" {
         },
         {
           protocol       = "TCP"
+          description    = "SSH с bastion и мастер-узлов K8s"
+          port           = 22
+          v4_cidr_blocks = ["10.0.0.0/16"]
+        },
+        {
+          protocol       = "TCP"
           description    = "kubelet (10250)"
           port           = 10250
           v4_cidr_blocks = ["10.0.0.0/16"]
