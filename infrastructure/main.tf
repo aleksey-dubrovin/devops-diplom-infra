@@ -307,3 +307,19 @@ module "compute" {
   security_group_ids = module.security_group.security_group_ids
   ssh_public_key     = file(var.ssh_public_key_path)
 }
+# =============================================================================
+# Генерация манифеста NodeGroup для внешних узлов
+# =============================================================================
+resource "local_file" "nodegroup_manifest" {
+  content  = local.nodegroup_manifest
+  filename = "${path.module}/k8s-nodes/nodegroup.yaml"
+}
+
+locals {
+  nodegroup_manifest = templatefile("${path.module}/templates/nodegroup.yaml.tpl", {
+    nodegroup_name  = var.external_nodegroup_name
+    namespace       = "yandex-system"
+    ssh_secret_name = "external-node-ssh-key"
+    worker_ips      = module.compute.worker_internal_ips_list
+  })
+}
