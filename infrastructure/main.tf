@@ -89,13 +89,13 @@ module "security_group" {
           protocol       = "TCP"
           description    = "Kubernetes API (443)"
           port           = 443
-          v4_cidr_blocks = ["10.0.0.0/16"]
+          v4_cidr_blocks = ["0.0.0.0/0"]
         },
         {
           protocol       = "TCP"
           description    = "Kubernetes API (6443)"
           port           = 6443
-          v4_cidr_blocks = ["10.0.0.0/16"]
+          v4_cidr_blocks = ["0.0.0.0/0"]
         },
         {
           protocol       = "TCP"
