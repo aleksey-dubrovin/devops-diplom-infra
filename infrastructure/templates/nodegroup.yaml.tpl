@@ -7,12 +7,10 @@ metadata:
   name: ${nodegroup_name}
   namespace: ${namespace}
 spec:
-  # Список IP-адресов внешних узлов (приватные IP в VPC кластера)
   ips:
 %{ for ip in worker_ips ~}
     - ${ip}
 %{ endfor ~}
-  # Автоматическая установка компонентов K8s на узлы через SSH
   provisionBySsh:
     sshKeySecret:
       name: ${ssh_secret_name}
