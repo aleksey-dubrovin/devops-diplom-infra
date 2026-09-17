@@ -179,6 +179,18 @@ module "security_group" {
         },
         {
           protocol       = "TCP"
+          description    = "node-exporter (9100)"
+          port           = 9100
+          v4_cidr_blocks = ["10.0.0.0/16"]
+        },
+        {
+          protocol       = "TCP"
+          description    = "Cilium health (4240)"
+          port           = 4240
+          v4_cidr_blocks = ["10.0.0.0/16"]
+        },
+        {
+          protocol       = "TCP"
           description    = "kubelet для связи с мастером"
           port           = 10250
           v4_cidr_blocks = ["10.0.0.0/16"]
