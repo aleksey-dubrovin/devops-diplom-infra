@@ -191,6 +191,13 @@ module "security_group" {
           v4_cidr_blocks = ["0.0.0.0/0"]
         },
         {
+          protocol          = "TCP"
+          description       = "Health checks от LoadBalancer"
+          from_port         = 0
+          to_port           = 65535
+          predefined_target = "loadbalancer_healthchecks"
+        },
+        {
           protocol       = "UDP"
           description    = "Cilium VXLAN"
           port           = 8472
