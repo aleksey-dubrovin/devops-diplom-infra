@@ -330,3 +330,55 @@ locals {
     worker_ips      = module.compute.worker_internal_ips_list
   })
 }
+# =============================================================================
+# Network Load Balancer для Ingress NGINX
+# =============================================================================
+resource "yandex_lb_target_group" "k8s_ingress" {
+  name      = "k8s-ingress-target-group"
+  folder_id = var.folder_id
+
+  # Добавляем оба worker-узла
+  dynamic "target" {
+    for_each = module.compute.worker_internal_ips
+    content {
+      subnet_id = module.vpc.private_subnet_ids[target.key]
+      address   = target.value
+    }
+  }
+}
+
+resource "yandex_lb_network_load_balancer" "k8s_ingress" {
+  name      = "k8s-ingress-nlb"
+  folder_id = var.folder_id
+  type      = "external"
+
+  listener {
+    name        = "http"
+    port        = 80
+    target_port = 30080
+    external_address_spec {
+      ip_version = "ipv4"
+    }
+  }
+
+  listener {
+    name        = "https"
+    port        = 443
+    target_port = 30443
+    external_address_spec {
+      ip_version = "ipv4"
+    }
+  }
+
+  attached_target_group {
+    target_group_id = yandex_lb_target_group.k8s_ingress.id
+
+    healthcheck {
+      name = "http"
+      http_options {
+        port = 30080
+        path = "/healthz"
+      }
+    }
+  }
+}

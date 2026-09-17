@@ -126,3 +126,8 @@ output "external_nodegroup_ips" {
   description = "Список IP-адресов, попавших в манифест NodeGroup"
   value       = module.compute.worker_internal_ips_list
 }
+
+output "nlb_ingress_external_ip" {
+  description = "Внешний IP NLB для ingress"
+  value       = yandex_lb_network_load_balancer.k8s_ingress.listener.*.external_address_spec[0].address
+}
