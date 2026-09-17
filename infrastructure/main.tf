@@ -339,7 +339,7 @@ resource "yandex_lb_target_group" "k8s_ingress" {
 
   # Добавляем оба worker-узла
   dynamic "target" {
-    for_each = module.compute.worker_internal_ips
+    for_each = module.compute.worker_internal_ips_by_zone
     content {
       subnet_id = module.vpc.private_subnet_ids[target.key]
       address   = target.value
