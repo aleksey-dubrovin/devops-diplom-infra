@@ -394,3 +394,30 @@ resource "yandex_lb_network_load_balancer" "k8s_ingress" {
     }
   }
 }
+# =============================================================================
+# Yandex Container Registry для Docker-образов приложения
+# =============================================================================
+resource "yandex_container_registry" "diplom" {
+  name      = "diplom-registry"
+  folder_id = var.folder_id
+  labels = {
+    project     = "diplom"
+    environment = "prod"
+  }
+}
+
+resource "yandex_container_registry_iam_binding" "puller" {
+  registry_id = yandex_container_registry.diplom.id
+  role        = "container-registry.images.puller"
+  members = [
+    "serviceAccount:${module.iam_k8s.service_account_id}",
+  ]
+}
+
+resource "yandex_container_registry_iam_binding" "pusher" {
+  registry_id = yandex_container_registry.diplom.id
+  role        = "container-registry.images.pusher"
+  members = [
+    "serviceAccount:${module.iam_k8s.service_account_id}",
+  ]
+}

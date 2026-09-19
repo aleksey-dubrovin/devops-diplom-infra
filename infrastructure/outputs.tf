@@ -126,3 +126,13 @@ output "external_nodegroup_ips" {
   description = "Список IP-адресов, попавших в манифест NodeGroup"
   value       = module.compute.worker_internal_ips_list
 }
+
+output "container_registry_id" {
+  description = "ID Container Registry"
+  value       = yandex_container_registry.diplom.id
+}
+
+output "container_registry_url" {
+  description = "URL Container Registry (для docker push)"
+  value       = "cr.yandex/${yandex_container_registry.diplom.id}"
+}
