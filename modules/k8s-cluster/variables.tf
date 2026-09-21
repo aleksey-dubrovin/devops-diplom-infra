@@ -160,3 +160,8 @@ variable "master_scale_policy" {
   type        = string
   default     = null
 }
+
+variable "log_group_id" {
+  description = "ID группы логирования для отправки логов мастер-узлов"
+  type        = string
+}

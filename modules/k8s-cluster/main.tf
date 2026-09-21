@@ -56,9 +56,16 @@ resource "yandex_kubernetes_cluster" "this" {
       }
     }
 
-    # Логирование отключено — будет вынесено в отдельный модуль
+  # ==========================================================================
+  # Логирование мастер-узлов
+  # ==========================================================================
     master_logging {
-      enabled = false
+      enabled                    = true
+      log_group_id               = var.log_group_id
+      kube_apiserver_enabled     = true
+      cluster_autoscaler_enabled = true
+      events_enabled             = true
+      audit_enabled              = true
     }
 
     dynamic "scale_policy" {

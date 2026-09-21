@@ -243,6 +243,7 @@ module "k8s_cluster" {
   network_id = module.vpc.vpc_id
   service_account_id      = module.iam_k8s.service_account_id
   node_service_account_id = module.iam_k8s.service_account_id
+  log_group_id = module.observability.log_group_id
 
   # Используем управляющие подсети (mgmt) в трёх зонах
   master_locations = [
@@ -307,6 +308,7 @@ module "iam_k8s" {
     "monitoring.editor",
     "storage.editor",
     "dns.editor",
+    "audit-trails.editor",
   ]
 }
 # =============================================================================
@@ -420,4 +422,17 @@ resource "yandex_container_registry_iam_binding" "pusher" {
   members = [
     "serviceAccount:${module.iam_k8s.service_account_id}",
   ]
+}
+# =============================================================================
+# Модуль Observability — Logging и Audit Trails
+# =============================================================================
+module "observability" {
+  source = "../modules/observability"
+
+  folder_id = var.folder_id
+  service_account_id = module.iam_k8s.service_account_id
+
+  log_group_name       = "diplom-k8s-logs"
+  log_retention_period = "3d"
+  audit_trail_name     = "diplom-audit-trail"
 }
