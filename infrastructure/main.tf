@@ -433,6 +433,6 @@ module "observability" {
   service_account_id = module.iam_k8s.service_account_id
 
   log_group_name       = "diplom-k8s-logs"
-  log_retention_period = "3d"
+  log_retention_period = "72h"
   audit_trail_name     = "diplom-audit-trail"
 }
