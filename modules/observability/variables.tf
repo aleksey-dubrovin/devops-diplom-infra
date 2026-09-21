@@ -15,9 +15,9 @@ variable "log_group_name" {
 }
 
 variable "log_retention_period" {
-  description = "Срок хранения логов (например, 1h, 3d, 1w)"
+  description = "Срок хранения логов (формат: 1h, 72h, 168h)"
   type        = string
-  default     = "3d"
+  default     = "72h"
 }
 
 variable "audit_trail_name" {
